@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Katalyze — reações entre marcas e criadores</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Space+Grotesk:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0a0f12;         /* petróleo quase preto */
+    --ink-2:#0f1519;
+    --paper:#eef0ec;       /* branco levemente esverdeado */
+    --paper-dim:#9aa4a0;
+    --react:#c8ff4d;       /* verde-reação (o único acento) */
+    --react-deep:#7ab52e;
+    --line:rgba(238,240,236,0.12);
+    --serif:"Fraunces",Georgia,serif;
+    --sans:"Space Grotesk",system-ui,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:var(--sans);
+    font-weight:300;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--react);color:var(--ink)}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+
+  /* ---------- nav ---------- */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:22px 32px;
+    mix-blend-mode:difference;
+  }
+  .brand{
+    font-family:var(--mono);font-size:15px;letter-spacing:0.28em;
+    text-transform:uppercase;color:#fff;font-weight:500;
+  }
+  .brand b{color:var(--react);mix-blend-mode:normal}
+  .nav-links{display:flex;gap:28px}
+  .nav-links a{
+    color:#fff;text-decoration:none;font-family:var(--mono);
+    font-size:12px;letter-spacing:0.12em;text-transform:uppercase;opacity:.75;
+    transition:opacity .3s;
+  }
+  .nav-links a:hover{opacity:1}
+  @media(max-width:640px){.nav-links{display:none}}
+
+  /* ---------- hero ---------- */
+  header{
+    min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+    position:relative;padding-top:80px;
+  }
+  .eyebrow{
+    font-family:var(--mono);font-size:12px;letter-spacing:0.3em;
+    text-transform:uppercase;color:var(--react);margin-bottom:34px;
+    display:flex;align-items:center;gap:14px;
+  }
+  .eyebrow::before{content:"";width:42px;height:1px;background:var(--react)}
+  h1{
+    font-family:var(--serif);font-weight:300;
+    font-size:clamp(2.9rem,8.5vw,7.2rem);
+    line-height:0.98;letter-spacing:-0.02em;
+    max-width:15ch;
+  }
+  h1 em{font-style:italic;color:var(--react)}
+  .hero-sub{
+    margin-top:40px;max-width:46ch;font-size:clamp(1rem,1.6vw,1.22rem);
+    color:var(--paper-dim);line-height:1.7;
+  }
+  .hero-meta{
+    margin-top:56px;display:flex;gap:40px;flex-wrap:wrap;
+    font-family:var(--mono);font-size:12px;letter-spacing:0.06em;
+    color:var(--paper-dim);text-transform:uppercase;
+  }
+  .hero-meta span b{color:var(--paper);font-weight:500;display:block;margin-bottom:4px}
+
+  /* reação SVG assinatura */
+  .reactor{position:absolute;top:50%;right:-90px;transform:translateY(-50%);
+    width:min(38vw,440px);height:min(38vw,440px);opacity:.85;z-index:-1;pointer-events:none}
+  @media(max-width:860px){.reactor{opacity:.2;right:-35%}}
+  .node{fill:var(--react)}
+  .bond{stroke:var(--react);stroke-width:1;fill:none;opacity:.5}
+  .ring{stroke:var(--line);fill:none}
+
+  .scrollcue{
+    position:absolute;bottom:34px;left:32px;font-family:var(--mono);
+    font-size:11px;letter-spacing:0.24em;text-transform:uppercase;color:var(--paper-dim);
+    display:flex;align-items:center;gap:12px;
+  }
+  .scrollcue::after{content:"";width:1px;height:34px;background:var(--paper-dim);
+    animation:drip 2.4s ease-in-out infinite;transform-origin:top}
+  @media(max-width:640px){.scrollcue{display:none}}
+  @keyframes drip{0%,100%{transform:scaleY(.3);opacity:.3}50%{transform:scaleY(1);opacity:1}}
+
+  /* ---------- sections ---------- */
+  section{padding:132px 0;position:relative}
+  .sec-label{
+    font-family:var(--mono);font-size:12px;letter-spacing:0.24em;text-transform:uppercase;
+    color:var(--react);margin-bottom:30px;
+  }
+  .sec-label span{color:var(--paper-dim)}
+  .big{
+    font-family:var(--serif);font-weight:300;
+    font-size:clamp(1.9rem,4.4vw,3.4rem);line-height:1.12;letter-spacing:-0.015em;
+    max-width:20ch;
+  }
+  .big em{font-style:italic;color:var(--react)}
+
+  .divider{height:1px;background:var(--line);width:100%}
+
+  /* thesis / equação */
+  .equation{
+    display:flex;align-items:center;justify-content:center;gap:clamp(16px,4vw,52px);
+    flex-wrap:wrap;padding:20px 0 4px;
+  }
+  .term{text-align:center}
+  .term .k{font-family:var(--serif);font-size:clamp(1.4rem,3vw,2.3rem);font-style:italic}
+  .term .d{font-family:var(--mono);font-size:11px;letter-spacing:0.18em;
+    text-transform:uppercase;color:var(--paper-dim);margin-top:10px}
+  .op{font-family:var(--serif);font-size:clamp(1.6rem,4vw,3rem);color:var(--react);font-weight:300}
+  .term.result .k{color:var(--react)}
+
+  /* serviços */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:72px;
+    border-top:1px solid var(--line)}
+  @media(max-width:820px){.grid{grid-template-columns:1fr}}
+  .cell{padding:40px 34px 46px;border-bottom:1px solid var(--line);
+    border-right:1px solid var(--line);position:relative;transition:background .4s}
+  .cell:nth-child(3n){border-right:none}
+  @media(max-width:820px){.cell{border-right:none}}
+  .cell:hover{background:var(--ink-2)}
+  .cell .num{font-family:var(--mono);font-size:12px;color:var(--react);letter-spacing:0.1em}
+  .cell h3{font-family:var(--serif);font-weight:400;font-size:1.5rem;margin:22px 0 14px;line-height:1.2}
+  .cell p{color:var(--paper-dim);font-size:0.96rem;line-height:1.65}
+
+  /* como funciona - fases */
+  .phases{margin-top:64px;display:flex;flex-direction:column;gap:0}
+  .phase{display:grid;grid-template-columns:110px 1fr;gap:36px;
+    padding:38px 0;border-top:1px solid var(--line);align-items:baseline}
+  .phase:last-child{border-bottom:1px solid var(--line)}
+  @media(max-width:640px){.phase{grid-template-columns:1fr;gap:12px}}
+  .phase .ph{font-family:var(--mono);font-size:13px;color:var(--react);letter-spacing:0.12em}
+  .phase h4{font-family:var(--serif);font-weight:400;font-size:1.65rem;margin-bottom:10px}
+  .phase p{color:var(--paper-dim);max-width:52ch}
+
+  /* manifesto */
+  .manifesto{text-align:center;padding:150px 0}
+  .manifesto p{font-family:var(--serif);font-weight:300;font-style:italic;
+    font-size:clamp(1.5rem,3.6vw,2.7rem);line-height:1.4;max-width:24ch;margin:0 auto;
+    letter-spacing:-0.01em}
+  .manifesto p b{font-style:normal;color:var(--react);font-weight:400}
+
+  /* cta / footer */
+  footer{padding:128px 0 56px;border-top:1px solid var(--line)}
+  .cta-h{font-family:var(--serif);font-weight:300;font-size:clamp(2.2rem,6vw,4.6rem);
+    line-height:1.02;letter-spacing:-0.02em;max-width:16ch}
+  .cta-h em{font-style:italic;color:var(--react)}
+  .cta-btn{display:inline-flex;align-items:center;gap:14px;margin-top:48px;
+    background:var(--react);color:var(--ink);text-decoration:none;
+    font-family:var(--mono);font-size:13px;letter-spacing:0.1em;text-transform:uppercase;
+    padding:18px 30px;border-radius:2px;font-weight:500;transition:transform .3s,box-shadow .3s}
+  .cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(200,255,77,0.25)}
+  .cta-btn span{font-size:18px;line-height:1}
+  .foot-meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:24px;
+    margin-top:110px;font-family:var(--mono);font-size:12px;letter-spacing:0.08em;
+    color:var(--paper-dim);text-transform:uppercase}
+  .foot-meta a{color:var(--paper-dim);text-decoration:none;transition:color .3s}
+  .foot-meta a:hover{color:var(--react)}
+
+  /* reveal on scroll */
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  @media(prefers-reduced-motion:reduce){
+    .reveal{opacity:1;transform:none;transition:none}
+    .scrollcue::after{animation:none}
+    .node,.bond{animation:none!important}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="brand">Kata<b>lyze</b></div>
+  <div class="nav-links">
+    <a href="#reacao">A reação</a>
+    <a href="#servicos">O que fazemos</a>
+    <a href="#metodo">Método</a>
+    <a href="#contato">Contato</a>
+  </div>
+</nav>
+
+<header>
+  <svg class="reactor" viewBox="0 0 400 400" aria-hidden="true">
+    <circle class="ring" cx="200" cy="200" r="150"/>
+    <circle class="ring" cx="200" cy="200" r="98"/>
+    <!-- ligações -->
+    <g class="bond-grp">
+      <line class="bond" x1="120" y1="120" x2="200" y2="200"/>
+      <line class="bond" x1="280" y1="130" x2="200" y2="200"/>
+      <line class="bond" x1="130" y1="290" x2="200" y2="200"/>
+      <line class="bond" x1="300" y1="270" x2="200" y2="200"/>
+    </g>
+    <!-- nós reagentes -->
+    <circle class="node n1" cx="120" cy="120" r="7"/>
+    <circle class="node n2" cx="280" cy="130" r="5"/>
+    <circle class="node n3" cx="130" cy="290" r="5"/>
+    <circle class="node n4" cx="300" cy="270" r="6"/>
+    <!-- núcleo -->
+    <circle class="node core" cx="200" cy="200" r="13"/>
+  </svg>
+
+  <div class="wrap">
+    <div class="eyebrow reveal">Marketing de influência · Brasil</div>
+    <h1 class="reveal">Onde a marca e o criador viram <em>reação.</em></h1>
+    <p class="hero-sub reveal">Conectamos grandes marcas aos criadores certos e transformamos essa parceria em conteúdo que a audiência realmente valoriza. Nós somos o catalisador — o que faz a reação acontecer sem tomar o lugar de ninguém.</p>
+    <div class="hero-meta reveal">
+      <span><b>+ Curadoria</b>o creator certo, não o mais barato</span>
+      <span><b>+ Conteúdo</b>relevância, não ruído</span>
+      <span><b>+ Escala</b>da matriz à praça local</span>
+    </div>
+  </div>
+  <div class="scrollcue">role para reagir</div>
+</header>
+
+<section id="reacao">
+  <div class="wrap">
+    <div class="sec-label reveal">01 — <span>a tese</span></div>
+    <p class="big reveal">A maioria das agências vende <em>alcance.</em> Nós provocamos uma reação: dois elementos que, juntos, viram algo que nenhum dos dois era sozinho.</p>
+
+    <div class="equation reveal" style="margin-top:80px">
+      <div class="term"><div class="k">Marca</div><div class="d">reagente A</div></div>
+      <div class="op">+</div>
+      <div class="term"><div class="k">Criador</div><div class="d">reagente B</div></div>
+      <div class="op">→</div>
+      <div class="term result"><div class="k">Katalyze</div><div class="d">o catalisador</div></div>
+      <div class="op">=</div>
+      <div class="term result"><div class="k">Relevância</div><div class="d">o produto</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider"></div></div>
+
+<section id="servicos">
+  <div class="wrap">
+    <div class="sec-label reveal">02 — <span>o que fazemos</span></div>
+    <p class="big reveal">Seis reações que rodamos <em>de ponta a ponta.</em></p>
+
+    <div class="grid">
+      <div class="cell reveal">
+        <div class="num">/01</div>
+        <h3>Curadoria de criadores</h3>
+        <p>Mapeamos e selecionamos os creators cujo público e valores conversam de verdade com a marca. Match estratégico, não catálogo.</p>
+      </div>
+      <div class="cell reveal">
+        <div class="num">/02</div>
+        <h3>Estratégia de campanha</h3>
+        <p>Desenhamos a ação inteira: briefing, narrativa, formatos e cronograma. A ideia antes do post, sempre.</p>
+      </div>
+      <div class="cell reveal">
+        <div class="num">/03</div>
+        <h3>Produção de conteúdo</h3>
+        <p>Conteúdo pensado para plataforma e audiência — o tipo de material que as pessoas escolhem assistir, não pulam.</p>
+      </div>
+      <div class="cell reveal">
+        <div class="num">/04</div>
+        <h3>Gestão e mensuração</h3>
+        <p>Negociação, contratos, veiculação e relatório. Você acompanha o resultado, a gente carrega a operação.</p>
+      </div>
+      <div class="cell reveal">
+        <div class="num">/05</div>
+        <h3>Ativações locais</h3>
+        <p>Da diretriz global da matriz à execução que faz sentido na praça. Traduzimos marca em linguagem de cada público.</p>
+      </div>
+      <div class="cell reveal">
+        <div class="num">/06</div>
+        <h3>Inteligência de marca</h3>
+        <p>Leitura de tendências, escuta social e recomendação. Onde a marca deveria estar antes de todo mundo perceber.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="metodo">
+  <div class="wrap">
+    <div class="sec-label reveal">03 — <span>como a reação acontece</span></div>
+    <p class="big reveal">Um catalisador reduz a energia necessária para <em>a transformação.</em> É isso que fazemos com o seu tempo.</p>
+
+    <div class="phases">
+      <div class="phase reveal">
+        <div class="ph">Fase 01</div>
+        <div>
+          <h4>Diagnóstico</h4>
+          <p>Entendemos a marca, o objetivo do negócio e o momento. Antes de falar em influenciador, entendemos o que precisa mudar.</p>
+        </div>
+      </div>
+      <div class="phase reveal">
+        <div class="ph">Fase 02</div>
+        <div>
+          <h4>Composição</h4>
+          <p>Selecionamos os criadores e desenhamos a narrativa. Aqui os reagentes certos são escolhidos e postos em contato.</p>
+        </div>
+      </div>
+      <div class="phase reveal">
+        <div class="ph">Fase 03</div>
+        <div>
+          <h4>Reação</h4>
+          <p>A campanha entra no ar. Conteúdo produzido, veiculado e acompanhado em tempo real, ajustando o que precisa.</p>
+        </div>
+      </div>
+      <div class="phase reveal">
+        <div class="ph">Fase 04</div>
+        <div>
+          <h4>Leitura</h4>
+          <p>Medimos o que aconteceu e traduzimos em aprendizado para a próxima reação. Relevância é um processo, não um post.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="manifesto">
+  <div class="wrap">
+    <p class="reveal">Não somos mais uma ponte entre marca e criador.<br>Somos o que faz os dois <b>reagirem.</b></p>
+  </div>
+</section>
+
+<footer id="contato">
+  <div class="wrap">
+    <h2 class="cta-h reveal">Vamos provocar uma <em>reação?</em></h2>
+    <a class="cta-btn reveal" href="mailto:contato@katalyze.com.br">contato@katalyze.com.br <span>→</span></a>
+    <div class="foot-meta">
+      <span>Katalyze © 2026 — Content & Creators</span>
+      <span><a href="#">Instagram</a> &nbsp;·&nbsp; <a href="#">LinkedIn</a></span>
+      <span>São Paulo · Brasil</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // reveal on scroll
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})
+  },{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach((el,i)=>{
+    el.style.transitionDelay=(Math.min(i,6)*0.06)+'s';
+    io.observe(el);
+  });
+
+  // pulso sutil nos nós da reação (respeitando reduced motion)
+  if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    const nodes=document.querySelectorAll('.reactor .node');
+    // grava o raio base uma única vez, antes de qualquer animação
+    nodes.forEach(n=>n.dataset.base=n.getAttribute('r'));
+    let t=0;
+    (function tick(){
+      t+=0.016;
+      nodes.forEach((n,i)=>{
+        const base=parseFloat(n.dataset.base);
+        const amp=n.classList.contains('core')?1.6:0.9;
+        n.setAttribute('r',(base+Math.sin(t*1.4+i*1.3)*amp).toFixed(2));
+      });
+      const bonds=document.querySelectorAll('.reactor .bond');
+      bonds.forEach((b,i)=>{b.style.opacity=(0.35+Math.abs(Math.sin(t+i))*0.4).toFixed(2)});
+      requestAnimationFrame(tick);
+    })();
+  }
+</script>
+</body>
+</html>
